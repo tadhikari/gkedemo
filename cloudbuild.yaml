@@ -1,0 +1,26 @@
+steps:
+# Build and push the Spring Boot Docker image
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/$PROJECT_ID/spring-boot-app:$SHORT_SHA', './spring-boot-app']
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/$PROJECT_ID/spring-boot-app:$SHORT_SHA']
+
+
+# Authenticate with GKE using your cluster details
+- name: 'gcr.io/cloud-builders/gcloud'
+  entrypoint: 'bash'
+  args:
+    - '-c'
+    - |
+      gcloud container clusters get-credentials autopilot-cluster-1 --zone us-central1
+
+# Deploy to GKE using Kubernetes manifests in the k8s/ directory
+- name: 'gcr.io/cloud-builders/kubectl'
+  args: ['apply', '-f', 'k8s/']
+
+# (Optional) List the deployed pods for verification
+- name: 'gcr.io/cloud-builders/kubectl'
+  args: ['get', 'pods']
+
+images:
+- 'gcr.io/$PROJECT_ID/spring-boot-app:$SHORT_SHA'
