@@ -2,34 +2,36 @@ options:
   logging: CLOUD_LOGGING_ONLY
 
 steps:
-  # 1. Build the Spring Boot application using Maven
-  - name: 'maven:3.8.5-openjdk-17'
+  # 1. Build with Maven
+  - name: 'maven:3.8.6-openjdk-17'
     entrypoint: 'mvn'
     args: ['clean', 'package']
   
-  # 2. Build the Docker image (Dockerfile at repository root)
+  # 2. Build and push Docker image
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/$PROJECT_ID/spring-boot-app:$SHORT_SHA', '.']
-  
-  # 3. Push the Docker image to Container Registry
+    args:
+      [
+        'build',
+        '-t', 'gcr.io/$PROJECT_ID/spring-boot-app:$SHORT_SHA',
+        '.'
+      ]
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'gcr.io/$PROJECT_ID/spring-boot-app:$SHORT_SHA']
-  
-  # 4. Authenticate with GKE (Autopilot in us-central1)
+
+  # 3. Get cluster credentials and run kubectl commands
   - name: 'gcr.io/cloud-builders/gcloud'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
+        # Authenticate with your cluster
         gcloud container clusters get-credentials autopilot-cluster-1 --region us-central1
-  
-  # 5. Deploy to GKE using the manifests in k8s/
-  - name: 'gcr.io/cloud-builders/kubectl'
-    args: ['apply', '-f', 'k8s/']
-  
-  # 6. (Optional) List pods for verification
-  - name: 'gcr.io/cloud-builders/kubectl'
-    args: ['get', 'pods']
+
+        # Apply your manifests from k8s/
+        kubectl apply -f k8s/
+
+        # (Optional) Verify pods
+        kubectl get pods
 
 images:
   - 'gcr.io/$PROJECT_ID/spring-boot-app:$SHORT_SHA'
