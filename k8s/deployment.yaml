@@ -15,6 +15,7 @@ spec:
       containers:
       - name: demo
         image: gcr.io/riftco-apps/demo:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 8080
         resources:
