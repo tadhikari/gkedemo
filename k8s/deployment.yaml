@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: spring-boot-deployment
+  name: demo-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: spring-boot
+      app: demo
   template:
     metadata:
       labels:
-        app: spring-boot
+        app: demo
     spec:
       containers:
-      - name: spring-boot
-        image: 	  image: gcr.io/stocktradeapplication/spring-boot-app:latest
+      - name: demo
+        image: 	  image: gcr.io/riftco-apps/demo:latest
         ports:
         - containerPort: 8080
