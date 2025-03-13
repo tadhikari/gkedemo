@@ -2,36 +2,29 @@ options:
   logging: CLOUD_LOGGING_ONLY
 
 steps:
-  # 1. Build with Maven
+  # 1. Build the JAR with Maven
   - name: 'maven:3.8.5-openjdk-17'
     entrypoint: 'mvn'
     args: ['clean', 'package']
-  
-  # 2. Build and push Docker image
-  - name: 'gcr.io/cloud-builders/docker'
-    args:
-      [
-        'build',
-        '-t', 'gcr.io/$PROJECT_ID/demo:$SHORT_SHA',
-        '.'
-      ]
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/$PROJECT_ID/demo:$SHORT_SHA']
 
-  # 3. Get cluster credentials and run kubectl commands
+  # 2. Build and tag the Docker image as :latest
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/riftco-apps/demo:latest', '.']
+
+  # 3. Push the image to GCR
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/riftco-apps/demo:latest']
+
+  # 4. Deploy to GKE
   - name: 'gcr.io/cloud-builders/gcloud'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
-        # Authenticate with your cluster
         gcloud container clusters get-credentials autopilot-cluster-1 --region us-central1
-
-        # Apply your manifests from k8s/
         kubectl apply -f k8s/
-
-        # (Optional) Verify pods
+        kubectl rollout restart deployment/demo-deployment # Force pull of :latest
         kubectl get pods
 
 images:
-  - 'gcr.io/$PROJECT_ID/demo:$SHORT_SHA'
+  - 'gcr.io/riftco-apps/demo:latest'
