@@ -7,6 +7,7 @@ spec:
   selector:
     app: demo
   ports:
-    - protocol: TCP
-      port: 8080       # External port
-      targetPort: 8080 # Container port
+    - name: http
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
