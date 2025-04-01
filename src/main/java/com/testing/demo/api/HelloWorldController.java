@@ -6,8 +6,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class HelloWorldController {
 
-    @GetMapping("/hello")
-    public String getHello() {
-        return "Hello World after 4th commit";
+    @GetMapping("/")
+    public String hello() {
+        return "Hello World from RiftCo TradeSense!";
+    }
+    
+    @GetMapping("/health")
+    public String health() {
+        return "UP";
     }
 }
