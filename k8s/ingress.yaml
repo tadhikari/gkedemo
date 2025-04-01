@@ -6,10 +6,12 @@ metadata:
   annotations:
     ingress.gcp.kubernetes.io/pre-shared-cert: "tradesense-certificate"
     kubernetes.io/ingress.class: "gce"
+    kubernetes.io/ingress.global-static-ip-name: "riftco-static-ip"  # You may need to create this static IP
     
 spec:
   rules:
-  - http:
+  - host: platform.riftco.io  # Added host specification
+    http:
       paths:
       - path: /api/pdf
         pathType: Prefix
@@ -36,6 +38,6 @@ spec:
         pathType: Prefix
         backend: 
           service:
-            name: demo-service  # Updated to point to our demo service
+            name: demo-service
             port:
               number: 8080
