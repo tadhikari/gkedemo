@@ -5,7 +5,7 @@ metadata:
   name: platform-ingress
   namespace: riftco-tradesense
   annotations:
-    ingress.gcp.kubernetes.io/pre-shared-cert: "tradesense-cert"
+    ingress.gcp.kubernetes.io/pre-shared-cert: "platform-tradesense-cert"
     kubernetes.io/ingress.class: "gce"
 spec:
   rules:
