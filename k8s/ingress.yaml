@@ -1,39 +1,17 @@
+
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: demo-ingress
+  name: platform-ingress
   namespace: riftco-tradesense
   annotations:
-    ingress.gcp.kubernetes.io/pre-shared-cert: "tradesense-certificate"
+    ingress.gcp.kubernetes.io/pre-shared-cert: "tradesense-cert"
     kubernetes.io/ingress.class: "gce"
-    kubernetes.io/ingress.global-static-ip-name: "riftco-static-ip"  # You may need to create this static IP
-    
 spec:
   rules:
-  - host: platform.riftco.io  # Added host specification
+  - host: platform.riftco.io
     http:
       paths:
-      - path: /api/pdf
-        pathType: Prefix
-        backend: 
-          service:
-            name: pdfprocessor-service
-            port:
-              number: 8080
-      - path: /api/auth
-        pathType: Prefix
-        backend:
-          service:
-            name: riftco-tradesense-simpleauthserver-service
-            port:
-              number: 8080
-      - path: /r
-        pathType: Prefix
-        backend:
-          service:
-            name: r-app-service
-            port:
-              number: 8080
       - path: /
         pathType: Prefix
         backend: 
