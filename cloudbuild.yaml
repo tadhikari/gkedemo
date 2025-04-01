@@ -21,7 +21,7 @@ steps:
     args:
       - '-c'
       - |
-        gcloud container clusters get-credentials cost-optimized-cluster-1 --region us-central1
+        gcloud container clusters get-credentials cost-optimized-cluster-1 --zone us-central1-a
         kubectl apply -f k8s/
         kubectl rollout restart deployment/demo-deployment -n riftco-tradesense # Force pull of :latest
         kubectl get pods -n riftco-tradesense
